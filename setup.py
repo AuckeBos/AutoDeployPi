@@ -1,6 +1,7 @@
 import os
 import json
 import secrets
+import subprocess
 
 from helpers import (
     log,
@@ -40,11 +41,19 @@ def setup_deployment_type():
 
     cfg = get_config()
     if do_simple_pull:
-        cfg["repo_location"] = input(
-            "Please provide the absolute folder path in which you want to pull. "
-            "Important: The directory must already be a git repo, eg it must already "
-            "be clonsed once: "
+        _dir = input(
+            "Please provide the absolute folder path in which you want to pull. It "
+            "must be empty: "
         )
+        # Now run a `git init in the dir`
+
+        if not os.path.exists(_dir):
+            os.mkdir(_dir)
+            print("Directory created")
+        cmd = f"cd {_dir} && git init"
+        subprocess.run(cmd, shell=True)
+        cfg["repo_location"] = _dir
+
     if run_bash_script:
         print(
             "Create your bash script, save it as `deploy.sh` in the root of this "

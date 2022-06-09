@@ -41,7 +41,7 @@ def do_simple_pull(url: str):
             True,
         )
     else:
-        cmd = f"cd {path} && git pull {url}"
+        cmd = f"cd {path} && git pull {url} ."
         log(f"Running `{cmd}`")
         subprocess.run(cmd, shell=True)
 
