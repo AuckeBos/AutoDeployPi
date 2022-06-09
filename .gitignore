@@ -1,3 +1,4 @@
 .idea
 config/cfg.json
 deploy.sh
+__pycache__
