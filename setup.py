@@ -1,5 +1,4 @@
 import os
-import json
 import secrets
 import subprocess
 
@@ -7,10 +6,7 @@ from helpers import (
     log,
     get_public_ip,
     CONFIG_DIR,
-    CONFIG_FILE,
-    get_config,
-    DEPLOYMENT_TYPES,
-    process_deployment_type,
+    save_config,
 )
 
 
@@ -19,59 +15,15 @@ def setup_server():
     Ask user for configuration of the server
     """
     cfg = {
-        "server_port": input("On which port should the server listen? [default: 8855]:")
+        "server_port": input(
+            "On which port should the deployment server listen? [" "default: 8855]:"
+        )
         or 8855,
         "secret": secrets.token_hex(16),
+        # Deployments are added through add_repo.py
+        "deployments": {},
     }
-    ip = get_public_ip()
-    port = cfg["server_port"]
-    secret = cfg["secret"]
-    url = f"http://{ip}:{port}/deploy"
-    print(
-        f"\nUse the following info for your Github Webhook:\n Payload URL: {url}\n "
-        f"Secret: {secret}\n"
-    )
-    _save_cfg(cfg)
-
-
-def setup_deployment_type():
-    cfg = get_config()
-    print(
-        "There are 5 different methods for deployment. The chosen method describes "
-        "what is to be done when a call to the webhook is received. The methods are as "
-        "follows:\n"
-    )
-    text = "\n".join([f"{key}: {value}" for key, value in DEPLOYMENT_TYPES.items()])
-    print(text + "\n")
-    _type = int(input("Please select a type, by entering its number: "))
-    do_simple_pull, run_bash_script, run_python_function = process_deployment_type(
-        _type
-    )
-    if do_simple_pull:
-        _dir = input(
-            "Please provide the absolute folder path in which you want to pull. It "
-            "must be empty: "
-        )
-        # Now run a `git init in the dir`
-
-        if not os.path.exists(_dir):
-            os.mkdir(_dir)
-            print("Directory created")
-        cmd = f"cd {_dir} && git init"
-        subprocess.run(cmd, shell=True)
-        cfg["repo_location"] = _dir
-
-    if run_bash_script:
-        print(
-            "Create your bash script, save it as `deploy.sh` in the root of this "
-            "repository. It will be called when the webhook is called by Github"
-        )
-    if run_python_function:
-        print(
-            "Implement your python function in the function `custom_deploy` in `app.py`"
-        )
-    cfg["deployment_type"] = _type
-    _save_cfg(cfg)
+    save_config(cfg)
 
 
 def setup_supervisord():
@@ -104,7 +56,7 @@ def setup_supervisord():
 
     print("Your current cron is as follows:")
     os.system(f"crontab -u {user} -l")
-    print('')
+    print("")
 
 
 def _supervisor_dir() -> str:
@@ -150,12 +102,7 @@ def _create_conf_file():
         f.write(content)
 
 
-def _save_cfg(cfg):
-    with open(CONFIG_FILE, "w") as file:
-        json.dump(cfg, file)
-
-
-def setup_all():
+def setup():
     """
     Run the complete setup
     """
@@ -181,10 +128,10 @@ def setup_all():
 
     os.mkdir(CONFIG_DIR)
     setup_server()
-    setup_deployment_type()
     setup_supervisord()
-    log("Config saved")
+    print("Config saved")
+    print("Run `poetry run python add_repo.py` to add a repo for auto-deployment")
 
 
 if __name__ == "__main__":
-    setup_all()
+    setup()

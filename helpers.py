@@ -6,15 +6,6 @@ import requests
 CONFIG_DIR = os.path.dirname(__file__) + "/config"
 CONFIG_FILE = f"{CONFIG_DIR}/cfg.json"
 
-DEPLOYMENT_TYPES = {
-    1: "Simple run `git pull repo_url` in a specific directory",
-    2: "Run a custom bash script when the webhook is called",
-    3: "Run a custom python function when the webhook is called",
-    4: "1 and 2",
-    5: "1 and 3",
-}
-
-
 def log(msg, error=False, fatal=False):
     """
     Helper function to log any data to stdout
@@ -50,25 +41,16 @@ def get_config(key=None):
         return cfg
 
 
+def save_config(cfg):
+    """
+    Save the config dir
+    """
+    with open(CONFIG_FILE, "w") as file:
+        json.dump(cfg, file)
+
+
 def get_public_ip():
     """
     Get the current public ip address
     """
     return requests.get("http://ipinfo.io/json").json()["ip"]
-
-
-def process_deployment_type(_type: int):
-    """
-    Parse the deployment type
-    :param type:  The type
-    :return: Tuple[bool,bool,bool]
-    Indiciating whether to:
-        - Do a simple git pull
-        - Run the bash script
-        - Run the python function
-    """
-    do_simple_pull = _type in (1, 4, 5)
-    run_bash_script = _type in (2, 4)
-    run_python_function = _type in (3, 5)
-
-    return do_simple_pull, run_bash_script, run_python_function
