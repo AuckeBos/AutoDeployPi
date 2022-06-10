@@ -83,7 +83,7 @@ if __name__ == "__main__":
     Run the flask app indefinitely
     """
 
-    port = cfg = get_config("port")
+    port = cfg = get_config("server_port")
     app.run(
         host="0.0.0.0",
         port=port,

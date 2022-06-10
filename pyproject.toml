@@ -8,6 +8,7 @@ authors = ["Aucke Bos <aucke.bos97@gmail.com>"]
 python = "^3.8"
 Flask = "^2.1.2"
 requests = "^2.28.0"
+supervisor = "^4.2.4"
 
 [tool.poetry.dev-dependencies]
 

@@ -2,3 +2,5 @@
 config/cfg.json
 deploy.sh
 __pycache__
+supervisor/supervisord.conf
+supervisor/supervisord.pid

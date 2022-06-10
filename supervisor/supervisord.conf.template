@@ -1,0 +1,20 @@
+# SUPERVISOR CONFIG FILE
+
+# Enable http server on localhost
+[inet_http_server]
+port=127.0.0.1:<PORT>
+
+# Log to current dir
+[supervisord]
+logfile=%(here)s/logs/supervisord.log
+pidfile=%(here)s/supervisord.pid
+childlogdir=%(here)s/logs/childlogs
+
+[program:AutoDeployPi]
+user=<USER> # This placeholder will by replaced during setup
+autostart=true # Start directly
+autorestart=true # Always restart
+directory=%(here)s/.. # Run in root folder
+redirect_stderr=true # Output stderr to stdout
+logfile=%(here)s/logs/Supervisord_AutoDeployPi.log # Log to log dir
+command=poetry run python app.py
