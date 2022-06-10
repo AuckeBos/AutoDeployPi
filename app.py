@@ -24,6 +24,7 @@ def deploy():
         run_bash_script()
     if python_function:
         run_python_function()
+    log('Done!')
     return "OK", 200
 
 
@@ -50,14 +51,14 @@ def run_bash_script():
     """
     Run the bash script, if it exists
     """
-    if not os.path.exists("./bash.sh"):
+    if not os.path.exists("./deploy.sh"):
         log(
             "Not running bash script, as it doesn't exist. Please create a file "
             "bash.sh in the root of this repo",
             True,
         )
     else:
-        cmd = f"./bash.sh"
+        cmd = f"./deploy.sh"
         log(f"Running `{cmd}`")
         subprocess.run(cmd, shell=True)
 

@@ -68,7 +68,7 @@ def process_deployment_type(_type: int):
         - Run the python function
     """
     do_simple_pull = _type in (1, 4, 5)
-    run_bash_script = _type in (2, 5)
+    run_bash_script = _type in (2, 4)
     run_python_function = _type in (3, 5)
 
     return do_simple_pull, run_bash_script, run_python_function
