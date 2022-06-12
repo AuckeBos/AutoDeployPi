@@ -14,6 +14,7 @@ def deploy():
     """
     Run the deploy. Called by Github
     """
+    # Todo: validate secret
     payload = json.loads(request.data.decode())
     log(f"Received {payload}")
 
